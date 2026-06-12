@@ -81,7 +81,11 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
 #chat-screen.open { display:flex; }
 .chat-topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 16px; display:flex; align-items:center; gap:12px; }
 .chat-back { font-size:20px; cursor:pointer; color:var(--accent2); }
-.chat-name { font-weight:700; font-size:16px; }
+.chat-name { font-weight:700; font-size:16px; flex:1; }
+.chat-call-btns { display:flex; gap:8px; }
+.call-btn { width:36px; height:36px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; }
+.voice-call-btn { background:#4fbe79; color:#fff; }
+.video-call-btn { background:var(--accent); color:#fff; }
 .chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
 .chat-bubble { max-width:75%; padding:10px 14px; border-radius:16px; font-size:14px; line-height:1.5; }
 .chat-bubble.mine { background:var(--accent); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
@@ -101,6 +105,27 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
 @keyframes spin { to { transform:rotate(360deg); } }
 #toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:var(--card); color:var(--text); padding:10px 20px; border-radius:20px; font-size:13px; z-index:999; opacity:0; transition:opacity .3s; pointer-events:none; border:1px solid var(--border); }
 #toast.show { opacity:1; }
+#call-screen { display:none; position:fixed; inset:0; background:#0d0d1a; z-index:500; flex-direction:column; align-items:center; justify-content:center; }
+#call-screen.open { display:flex; }
+.call-avatar { width:100px; height:100px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:700; color:#fff; margin-bottom:16px; overflow:hidden; }
+.call-avatar img { width:100%; height:100%; object-fit:cover; }
+.call-name { font-size:22px; font-weight:800; margin-bottom:8px; }
+.call-status { font-size:14px; color:var(--muted); margin-bottom:40px; }
+.call-actions { display:flex; gap:24px; }
+.call-action-btn { width:64px; height:64px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; }
+.end-call-btn { background:var(--danger); color:#fff; }
+.mute-btn { background:var(--card); color:var(--text); }
+.cam-btn { background:var(--card); color:var(--text); }
+#local-video { position:absolute; bottom:120px; right:20px; width:100px; height:140px; border-radius:12px; background:#000; object-fit:cover; border:2px solid var(--accent); display:none; }
+#remote-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; z-index:-1; }
+.incoming-call { display:none; position:fixed; inset:0; background:#0009; z-index:400; align-items:center; justify-content:center; }
+.incoming-call.open { display:flex; }
+.incoming-box { background:var(--surface); border-radius:20px; padding:32px 24px; text-align:center; width:85%; max-width:340px; }
+.incoming-name { font-size:20px; font-weight:800; margin:12px 0 6px; }
+.incoming-type { font-size:13px; color:var(--muted); margin-bottom:24px; }
+.incoming-btns { display:flex; gap:16px; justify-content:center; }
+.accept-btn { width:64px; height:64px; border-radius:50%; background:#4fbe79; border:none; font-size:24px; cursor:pointer; }
+.reject-btn { width:64px; height:64px; border-radius:50%; background:var(--danger); border:none; font-size:24px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -191,11 +216,38 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
     <div class="chat-back" onclick="closeChat()">←</div>
     <div class="avatar" id="chat-avatar" style="width:36px;height:36px;font-size:14px;">?</div>
     <div class="chat-name" id="chat-name">চ্যাট</div>
+    <div class="chat-call-btns">
+      <button class="call-btn voice-call-btn" onclick="startCall('voice')" title="Voice Call">📞</button>
+      <button class="call-btn video-call-btn" onclick="startCall('video')" title="Video Call">📹</button>
+    </div>
   </div>
   <div class="chat-messages" id="chat-messages"></div>
   <div class="chat-input-bar">
     <input type="text" id="chat-input" placeholder="মেসেজ লেখো...">
     <button class="chat-send-btn" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+<div id="call-screen">
+  <video id="remote-video" autoplay playsinline></video>
+  <video id="local-video" autoplay playsinline muted></video>
+  <div class="call-avatar" id="call-avatar">?</div>
+  <div class="call-name" id="call-name">নাম</div>
+  <div class="call-status" id="call-status">কানেক্ট হচ্ছে...</div>
+  <div class="call-actions">
+    <button class="call-action-btn mute-btn" id="mute-btn" onclick="toggleMute()">🎤</button>
+    <button class="call-action-btn end-call-btn" onclick="endCall()">📵</button>
+    <button class="call-action-btn cam-btn" id="cam-btn" onclick="toggleCam()" style="display:none;">📷</button>
+  </div>
+</div>
+<div class="incoming-call" id="incoming-call">
+  <div class="incoming-box">
+    <div style="font-size:48px;">📞</div>
+    <div class="incoming-name" id="incoming-name">কেউ</div>
+    <div class="incoming-type" id="incoming-type">Voice Call আসছে...</div>
+    <div class="incoming-btns">
+      <button class="accept-btn" onclick="acceptCall()">✅</button>
+      <button class="reject-btn" onclick="rejectCall()">❌</button>
+    </div>
   </div>
 </div>
 <div class="modal-overlay" id="new-msg-modal">
@@ -222,6 +274,8 @@ firebase.initializeApp({
 const auth=firebase.auth();
 const db=firebase.firestore();
 let currentUser=null,currentUserData=null,currentChatId=null,currentChatUser=null,feedUnsub=null,chatUnsub=null;
+let localStream=null,peerConnection=null,callType=null,isMuted=false,isCamOff=false,callUnsub=null;
+const iceServers={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function avatarInitial(name){return name?name[0].toUpperCase():'?';}
 function timeAgo(ts){if(!ts)return'';const ms=ts.toMillis?ts.toMillis():ts.seconds*1000;const diff=Date.now()-ms;const m=Math.floor(diff/60000);const h=Math.floor(diff/3600000);if(m<1)return'এইমাত্র';if(m<60)return m+' মিনিট আগে';if(h<24)return h+' ঘণ্টা আগে';return Math.floor(h/24)+' দিন আগে';}
@@ -230,7 +284,7 @@ function switchTab(tab){document.getElementById('tab-login').classList.toggle('a
 async function doRegister(){const name=document.getElementById('reg-name').value.trim();const email=document.getElementById('reg-email').value.trim();const pass=document.getElementById('reg-pass').value;const msg=document.getElementById('auth-msg');if(!name||!email||!pass){msg.textContent='সব ঘর পূরণ করো।';msg.className='auth-msg error';return;}try{const cred=await auth.createUserWithEmailAndPassword(email,pass);await cred.user.updateProfile({displayName:name});await db.collection('users').doc(cred.user.uid).set({name,email,bio:'',avatar:'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});msg.textContent='অ্যাকাউন্ট তৈরি হয়েছে!';msg.className='auth-msg success';}catch(e){msg.textContent=e.code==='auth/email-already-in-use'?'এই ইমেইল আগেই রেজিস্টার করা।':'সমস্যা: '+e.message;msg.className='auth-msg error';}}
 async function doLogin(){const email=document.getElementById('login-email').value.trim();const pass=document.getElementById('login-pass').value;const msg=document.getElementById('auth-msg');try{await auth.signInWithEmailAndPassword(email,pass);}catch(e){msg.textContent='ইমেইল বা পাসওয়ার্ড ভুল।';msg.className='auth-msg error';}}
 async function doLogout(){await auth.signOut();}
-auth.onAuthStateChanged(async(user)=>{if(user){currentUser=user;const snap=await db.collection('users').doc(user.uid).get();currentUserData=snap.exists?snap.data():{name:user.displayName||'User',bio:'',avatar:''};document.getElementById('auth-screen').style.display='none';document.getElementById('app-screen').style.display='block';loadUserUI();loadFeed();loadMessages();cleanupExpiredPosts();}else{currentUser=null;currentUserData=null;document.getElementById('auth-screen').style.display='flex';document.getElementById('app-screen').style.display='none';if(feedUnsub)feedUnsub();}});
+auth.onAuthStateChanged(async(user)=>{if(user){currentUser=user;const snap=await db.collection('users').doc(user.uid).get();currentUserData=snap.exists?snap.data():{name:user.displayName||'User',bio:'',avatar:''};document.getElementById('auth-screen').style.display='none';document.getElementById('app-screen').style.display='block';loadUserUI();loadFeed();loadMessages();cleanupExpiredPosts();listenIncomingCalls();}else{currentUser=null;currentUserData=null;document.getElementById('auth-screen').style.display='flex';document.getElementById('app-screen').style.display='none';if(feedUnsub)feedUnsub();}});
 function loadUserUI(){const name=currentUserData.name||currentUser.displayName||'User';const av=currentUserData.avatar;document.getElementById('composer-avatar').innerHTML=av?'<img src="'+av+'">':avatarInitial(name);document.getElementById('profile-name-display').textContent=name;document.getElementById('profile-bio-display').textContent=currentUserData.bio||'কোনো বায়ো নেই';document.getElementById('profile-avatar-big').innerHTML=av?'<img src="'+av+'">':avatarInitial(name);}
 function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.getElementById('nav-'+page).classList.add('active');if(page==='messages')loadMessages();if(page==='profile'){loadUserUI();loadMyPosts();}}
 function previewImage(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{document.getElementById('compose-img-preview').style.display='block';document.getElementById('compose-preview-img').src=e.target.result;};reader.readAsDataURL(file);}
@@ -252,10 +306,4 @@ function openNewMsg(){document.getElementById('new-msg-modal').classList.add('op
 function closeNewMsg(){document.getElementById('new-msg-modal').classList.remove('open');document.getElementById('new-msg-email').value='';}
 async function startNewChat(){const email=document.getElementById('new-msg-email').value.trim();if(!email){showToast('ইমেইল দাও!');return;}if(email===currentUser.email){showToast('নিজেকে মেসেজ করা যাবে না!');return;}const snap=await db.collection('users').where('email','==',email).get();if(snap.empty){showToast('এই ইমেইলের কোনো ব্যবহারকারী নেই।');return;}const otherDoc=snap.docs[0];const otherData=otherDoc.data();closeNewMsg();openChatById(getChatId(currentUser.uid,otherDoc.id),otherDoc.id,otherData.name,otherData.avatar||'');}
 function openChatByUid(uid,name,avatar){openChatById(getChatId(currentUser.uid,uid),uid,name,avatar);}
-function openChatById(chatId,otherUid,otherName,otherAvatar){currentChatId=chatId;currentChatUser={uid:otherUid,name:otherName,avatar:otherAvatar};document.getElementById('chat-name').textContent=otherName;const av=document.getElementById('chat-avatar');av.innerHTML=otherAvatar?'<img src="'+otherAvatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">':avatarInitial(otherName);document.getElementById('chat-screen').classList.add('open');document.getElementById('chat-messages').innerHTML='<div class="loading"><span class="spinner"></span></div>';if(chatUnsub)chatUnsub();chatUnsub=db.collection('chats').doc(chatId).collection('messages').orderBy('createdAt','asc').onSnapshot(snap=>{const msgs=snap.docs;document.getElementById('chat-messages').innerHTML=msgs.length===0?'<div style="text-align:center;color:var(--muted);padding:40px;font-size:13px;">প্রথম মেসেজ পাঠাও!</div>':msgs.map(d=>{const m=d.data();const mine=m.uid===currentUser.uid;return'<div style="display:flex;flex-direction:column;align-items:'+(mine?'flex-end':'flex-start')+';"><div class="chat-bubble '+(mine?'mine':'theirs')+'">'+m.text+'</div><div style="align-self:'+(mine?'flex-end':'flex-start')+';color:var(--muted);font-size:10px;margin-top:2px;">'+timeAgo(m.createdAt)+'</div></div>';}).join('');const cm=document.getElementById('chat-messages');cm.scrollTop=cm.scrollHeight;});}
-function closeChat(){document.getElementById('chat-screen').classList.remove('open');if(chatUnsub)chatUnsub();loadMessages();}
-async function sendMsg(){const input=document.getElementById('chat-input');const text=input.value.trim();if(!text||!currentChatId)return;input.value='';await db.collection('chats').doc(currentChatId).collection('messages').add({uid:currentUser.uid,text,createdAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection('chats').doc(currentChatId).set({lastMsg:text,lastAt:firebase.firestore.FieldValue.serverTimestamp(),names:{[currentUser.uid]:currentUserData.name||currentUser.displayName,[currentChatUser.uid]:currentChatUser.name},avatars:{[currentUser.uid]:currentUserData.avatar||'',[currentChatUser.uid]:currentChatUser.avatar||''}},{merge:true});}
-document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});
-</script>
-</body>
-</html>
+function openChatById(chatId,otherUid,otherName,otherAvatar){currentChatId=chatId;currentChatUser={uid:otherUid,name:otherName,avatar:otherAvatar};document.getElementById('chat-name').textContent=otherName;const av=document.getElementById('chat-avatar');av.innerHTML=otherAvatar?'<img src="'+otherAvatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">':avatarInitial(otherName);document.getElementById('chat-screen').classList.add('open');document.getElementById('chat-messages').innerHTML='<div class="loading"><span class="spinner"></span></div>';if(chatUnsub)chatUnsub();chatUnsub=db.collection('chats').doc(chatId).collection('messages').orderBy('createdAt','asc').onSnapshot(snap=>{const msgs=snap.docs;document.getElementById('chat-messages').innerHTML=msgs.length===0?'<div style="text-align:center;color:var(--muted);padding:40px;font-size:13px;">প্রথম মেসেজ পাঠাও!</div>':msgs.map(d=>{const m=d.data();const mine=m.uid===currentUser.uid;return'<div style="display:flex;flex-direction:column;align-items:'+(mine?'flex-end':'flex-start')+';"><div class="chat-bubble '+(mine?'mine':'their
