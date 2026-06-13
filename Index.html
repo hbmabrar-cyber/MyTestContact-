@@ -216,6 +216,10 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
     <div class="chat-back" onclick="closeChat()">←</div>
     <div class="avatar" id="chat-avatar" style="width:36px;height:36px;font-size:14px;">?</div>
     <div class="chat-name" id="chat-name">চ্যাট</div>
+    <div style="display:flex;gap:8px;">
+<button style="width:36px;height:36px;border-radius:50%;background:#4fbe79;border:none;color:#fff;font-size:16px;cursor:pointer;" onclick="showToast('Call ফিচার শীঘ্রই আসছে!')">📞</button>
+<button style="width:36px;height:36px;border-radius:50%;background:#6c63ff;border:none;color:#fff;font-size:16px;cursor:pointer;" onclick="showToast('Call ফিচার শীঘ্রই আসছে!')">📹</button>
+    </div>
     <div class="chat-call-btns">
       <button class="call-btn voice-call-btn" onclick="startCall('voice')" title="Voice Call">📞</button>
       <button class="call-btn video-call-btn" onclick="startCall('video')" title="Video Call">📹</button>
