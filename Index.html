@@ -134,19 +134,19 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
     <div class="auth-logo">✦ MySocial</div>
     <div class="auth-sub">তোমার নিজস্ব সোশ্যাল স্পেস</div>
     <div class="auth-tabs">
-      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">লগইন</div>
-      <div class="auth-tab" id="tab-register" onclick="switchTab('register')">রেজিস্টার</div>
+      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+      <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</div>
     </div>
     <div id="login-form">
-      <div class="input-group"><label>ইমেইল</label><input type="email" id="login-email" placeholder="example@gmail.com"></div>
-      <div class="input-group"><label>পাসওয়ার্ড</label><input type="password" id="login-pass" placeholder="••••••••"></div>
-      <button class="btn-primary" onclick="doLogin()">লগইন করো</button>
+      <div class="input-group"><label>Email</label><input type="email" id="login-email" placeholder="example@gmail.com"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••"></div>
+      <button class="btn-primary" onclick="doLogin()">Login</button>
     </div>
     <div id="register-form" style="display:none">
-      <div class="input-group"><label>নাম</label><input type="text" id="reg-name" placeholder="তোমার নাম"></div>
-      <div class="input-group"><label>ইমেইল</label><input type="email" id="reg-email" placeholder="example@gmail.com"></div>
-      <div class="input-group"><label>পাসওয়ার্ড</label><input type="password" id="reg-pass" placeholder="কমপক্ষে ৬ অক্ষর"></div>
-      <button class="btn-primary" onclick="doRegister()">অ্যাকাউন্ট তৈরি করো</button>
+      <div class="input-group"><label>Name</label><input type="text" id="reg-name" placeholder="Your Name"></div>
+      <div class="input-group"><label>Email</label><input type="email" id="reg-email" placeholder="example@gmail.com"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="reg-pass" placeholder="At least 6 characters"></div>
+      <button class="btn-primary" onclick="doRegister()">Create Account</button>
     </div>
     <div id="auth-msg" class="auth-msg"></div>
   </div>
@@ -160,21 +160,21 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
     <div class="composer">
       <div class="composer-top">
         <div class="avatar" id="composer-avatar">?</div>
-        <textarea id="post-text" placeholder="কী মনে হচ্ছে আজকে?" rows="2"></textarea>
+        <textarea id="post-text" placeholder="What are you thinking today?" rows="2"></textarea>
       </div>
       <div id="compose-img-preview"><img id="compose-preview-img" src=""></div>
       <div class="composer-actions">
-        <label class="img-btn" for="post-img-input">📷 ছবি</label>
+        <label class="img-btn" for="post-img-input">📷 Photo</label>
         <input type="file" id="post-img-input" accept="image/*" style="display:none" onchange="previewImage(this)">
-        <button class="compose-btn" onclick="submitPost()">পোস্ট করো ✦</button>
+        <button class="compose-btn" onclick="submitPost()">Upload Post✦</button>
       </div>
     </div>
     <div class="timer-info">⏱ পোস্টগুলো <span>৫ ঘণ্টা</span> পর অটোমেটিক মুছে যাবে</div>
-    <div id="feed-loading" class="loading"><span class="spinner"></span>লোড হচ্ছে...</div>
+    <div id="feed-loading" class="loading"><span class="spinner"></span>Loading...</div>
     <div id="feed-list"></div>
   </div>
   <div class="page" id="page-messages">
-    <div class="section-title">মেসেজ</div>
+    <div class="section-title">Message</div>
     <div style="padding:12px 16px;">
       <button class="btn-primary" onclick="openNewMsg()" style="border-radius:20px;padding:10px 20px;font-size:13px;width:auto;">✉ নতুন মেসেজ</button>
     </div>
@@ -187,22 +187,22 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
         <label class="avatar-edit-btn" for="avatar-input">✏️</label>
         <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
       </div>
-      <div class="profile-name" id="profile-name-display">লোড হচ্ছে...</div>
-      <div class="profile-bio" id="profile-bio-display">কোনো বায়ো নেই</div>
+      <div class="profile-name" id="profile-name-display">Loading...</div>
+      <div class="profile-bio" id="profile-bio-display">No Bio</div>
       <div class="profile-edit-form" id="profile-edit-form">
-        <input type="text" id="edit-name" placeholder="তোমার নাম">
-        <textarea id="edit-bio" placeholder="তোমার সম্পর্কে কিছু লেখো..." rows="2" style="resize:none;width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;"></textarea>
+        <input type="text" id="edit-name" placeholder="Your Name">
+        <textarea id="edit-bio" placeholder="Will you write something about yourself?..." rows="2" style="resize:none;width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;"></textarea>
         <div style="display:flex;gap:10px;justify-content:center;">
           <button class="btn-primary" onclick="saveProfile()" style="width:auto;padding:8px 24px;border-radius:20px;">সেভ করো</button>
-          <button class="btn-outline" onclick="cancelEdit()">বাতিল</button>
+          <button class="btn-outline" onclick="cancelEdit()">Cancel</button>
         </div>
       </div>
       <div class="profile-btns" id="profile-btns">
-        <button class="btn-outline" onclick="editProfile()">✏ প্রোফাইল এডিট</button>
-        <button class="btn-danger-outline" onclick="doLogout()">লগআউট</button>
+        <button class="btn-outline" onclick="editProfile()">✏ Edit Profile</button>
+        <button class="btn-danger-outline" onclick="doLogout()"Logout</button>
       </div>
     </div>
-    <div class="section-title">আমার পোস্টগুলো</div>
+    <div class="section-title"=My post</div>
     <div id="my-posts-list"></div>
   </div>
   <div class="bottom-nav">
@@ -215,7 +215,7 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
   <div class="chat-topbar">
     <div class="chat-back" onclick="closeChat()">←</div>
     <div class="avatar" id="chat-avatar" style="width:36px;height:36px;font-size:14px;">?</div>
-    <div class="chat-name" id="chat-name">চ্যাট</div>
+    <div class="chat-name" id="chat-name">Chat</div>
     <div style="display:flex;gap:8px;">
 <button style="width:36px;height:36px;border-radius:50%;background:#4fbe79;border:none;color:#fff;font-size:16px;cursor:pointer;" onclick="showToast('Call ফিচার শীঘ্রই আসছে!')">📞</button>
 <button style="width:36px;height:36px;border-radius:50%;background:#6c63ff;border:none;color:#fff;font-size:16px;cursor:pointer;" onclick="showToast('Call ফিচার শীঘ্রই আসছে!')">📹</button>
@@ -227,7 +227,7 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
   </div>
   <div class="chat-messages" id="chat-messages"></div>
   <div class="chat-input-bar">
-    <input type="text" id="chat-input" placeholder="মেসেজ লেখো...">
+    <input type="text" id="chat-input" placeholder="Type message...">
     <button class="chat-send-btn" onclick="sendMsg()">➤</button>
   </div>
 </div>
@@ -236,7 +236,7 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
   <video id="local-video" autoplay playsinline muted></video>
   <div class="call-avatar" id="call-avatar">?</div>
   <div class="call-name" id="call-name">নাম</div>
-  <div class="call-status" id="call-status">কানেক্ট হচ্ছে...</div>
+  <div class="call-status" id="call-status">Connecting...</div>
   <div class="call-actions">
     <button class="call-action-btn mute-btn" id="mute-btn" onclick="toggleMute()">🎤</button>
     <button class="call-action-btn end-call-btn" onclick="endCall()">📵</button>
@@ -247,7 +247,7 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
   <div class="incoming-box">
     <div style="font-size:48px;">📞</div>
     <div class="incoming-name" id="incoming-name">কেউ</div>
-    <div class="incoming-type" id="incoming-type">Voice Call আসছে...</div>
+    <div class="incoming-type" id="incoming-type">Voice Call Coming...</div>
     <div class="incoming-btns">
       <button class="accept-btn" onclick="acceptCall()">✅</button>
       <button class="reject-btn" onclick="rejectCall()">❌</button>
@@ -257,8 +257,8 @@ body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-seri
 <div class="modal-overlay" id="new-msg-modal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeNewMsg()">✕</button>
-    <div class="modal-title">নতুন মেসেজ</div>
-    <input type="email" id="new-msg-email" placeholder="প্রাপকের ইমেইল লেখো">
+    <div class="modal-title">New message</div>
+    <input type="email" id="new-msg-email" placeholder="Enter people email">
     <button class="btn-primary" onclick="startNewChat()">চ্যাট শুরু করো</button>
   </div>
 </div>
@@ -283,7 +283,7 @@ const iceServers={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function avatarInitial(name){return name?name[0].toUpperCase():'?';}
 function timeAgo(ts){if(!ts)return'';const ms=ts.toMillis?ts.toMillis():ts.seconds*1000;const diff=Date.now()-ms;const m=Math.floor(diff/60000);const h=Math.floor(diff/3600000);if(m<1)return'এইমাত্র';if(m<60)return m+' মিনিট আগে';if(h<24)return h+' ঘণ্টা আগে';return Math.floor(h/24)+' দিন আগে';}
-function expiresIn(expMs){const r=expMs-Date.now();if(r<=0)return'মুছে যাচ্ছে...';const h=Math.floor(r/3600000);const m=Math.floor((r%3600000)/60000);return h+'ঘ '+m+'মি পরে মুছবে';}
+function expiresIn(expMs){const r=expMs-Date.now();if(r<=0)return'Deleted...';const h=Math.floor(r/3600000);const m=Math.floor((r%3600000)/60000);return h+'ঘ '+m+'মি পরে মুছবে';}
 function switchTab(tab){document.getElementById('tab-login').classList.toggle('active',tab==='login');document.getElementById('tab-register').classList.toggle('active',tab==='register');document.getElementById('login-form').style.display=tab==='login'?'block':'none';document.getElementById('register-form').style.display=tab==='register'?'block':'none';document.getElementById('auth-msg').className='auth-msg';}
 async function doRegister(){const name=document.getElementById('reg-name').value.trim();const email=document.getElementById('reg-email').value.trim();const pass=document.getElementById('reg-pass').value;const msg=document.getElementById('auth-msg');if(!name||!email||!pass){msg.textContent='সব ঘর পূরণ করো।';msg.className='auth-msg error';return;}try{const cred=await auth.createUserWithEmailAndPassword(email,pass);await cred.user.updateProfile({displayName:name});await db.collection('users').doc(cred.user.uid).set({name,email,bio:'',avatar:'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});msg.textContent='অ্যাকাউন্ট তৈরি হয়েছে!';msg.className='auth-msg success';}catch(e){msg.textContent=e.code==='auth/email-already-in-use'?'এই ইমেইল আগেই রেজিস্টার করা।':'সমস্যা: '+e.message;msg.className='auth-msg error';}}
 async function doLogin(){const email=document.getElementById('login-email').value.trim();const pass=document.getElementById('login-pass').value;const msg=document.getElementById('auth-msg');try{await auth.signInWithEmailAndPassword(email,pass);}catch(e){msg.textContent='ইমেইল বা পাসওয়ার্ড ভুল।';msg.className='auth-msg error';}}
